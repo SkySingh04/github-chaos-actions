@@ -85,7 +85,7 @@ jobs:
           APP_NS: default
           APP_LABEL: run=nginx
           APP_KIND: deployment
-          IMAGE_PULL_POLICY: Always
+           
           TOTAL_CHAOS_DURATION: 30
           CHAOS_INTERVAL: 10
           FORCE: false
@@ -145,7 +145,7 @@ jobs:
           APP_NS: default
           APP_LABEL: run=nginx
           APP_KIND: deployment
-          IMAGE_PULL_POLICY: Always
+           
           TOTAL_CHAOS_DURATION: 30
           CHAOS_INTERVAL: 10
           FORCE: false

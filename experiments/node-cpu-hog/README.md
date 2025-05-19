@@ -43,9 +43,9 @@ jobs:
           
           # Experiment Configuration
           EXPERIMENT_NAME: node-cpu-hog
-          EXPERIMENT_IMAGE: litmuschaos.docker.scarf.sh/litmuschaos/go-runner
-          EXPERIMENT_IMAGE_TAG: 3.16.0
-          IMAGE_PULL_POLICY: Always
+          EXPERIMENT_IMAGE: litmuschaos/go-runner
+          EXPERIMENT_IMAGE_TAG: 1.13.8
+           
           
           # Node CPU Hog Specific Configuration
           TOTAL_CHAOS_DURATION: 60
@@ -294,13 +294,13 @@ The following environment variables are used to configure the node-cpu-hog exper
     <td> EXPERIMENT_IMAGE </td>
     <td> We can provide custom image for running chaos experiment </td>
     <td> Optional </td>
-    <td> litmuschaos.docker.scarf.sh/litmuschaos/go-runner </td>
+    <td> litmuschaos/go-runner </td>
   </tr>
   <tr>
     <td> EXPERIMENT_IMAGE_TAG </td>
     <td> We can set the image tag while using custom image for the chaos experiment </td>
     <td> Optional </td>
-    <td> 3.16.0 </td>
+    <td> 1.13.8 </td>
   </tr>  
   <tr>
     <td> IMAGE_PULL_POLICY </td>
