@@ -2,10 +2,6 @@
 
 set -e
 
-TOTAL_CHAOS_DURATION=${TOTAL_CHAOS_DURATION:=60}
-TEST_TIMEOUT=$((600 + $TOTAL_CHAOS_DURATION))
-PARALLEL_EXECUTION=${PARALLEL_EXECUTION:=1}
-
 ##Extract the base64 encoded config data and write this to the KUBECONFIG
 if [ ! -z "$KUBE_CONFIG_DATA" ]
 then
@@ -14,11 +10,7 @@ then
   export KUBECONFIG=${HOME}/.kube/config
 fi 
 
-##Setup 
-mkdir -p $HOME/go/src/github.com/litmuschaos
-cd ${GOPATH}/src/github.com/litmuschaos/
-dir=${GOPATH}/src/github.com/litmuschaos/chaos-ci-lib
-
+##Setup AWS credentials if provided
 if [[ ! -z $AWS_ACCESS_KEY_ID ]] && [[ ! -z $AWS_SECRET_ACCESS_KEY ]] && [[ ! -z $AWS_DEFAULT_REGION ]]
 then 
   aws configure set default.region ${AWS_DEFAULT_REGION}
@@ -26,31 +18,77 @@ then
   aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY}
 fi
 
-if [ ! -d $dir ]
-then
-  git clone https://github.com/litmuschaos/chaos-ci-lib.git
-fi
-cd chaos-ci-lib
+# Set default values for experiment configuration
+EXPERIMENT_IMAGE=${EXPERIMENT_IMAGE:-"litmuschaos/go-runner"}
+EXPERIMENT_IMAGE_TAG=${EXPERIMENT_IMAGE_TAG:-"3.18.0"}
+TOTAL_CHAOS_DURATION=${TOTAL_CHAOS_DURATION:-60}
 
-##Install litmus if it is not already installed
-if [ "$INSTALL_LITMUS" == "true" ]
-then
-  go test litmus/install-litmus_test.go -v -count=1
-fi
-
-if [ "$EXPERIMENT_NAME" == "all" ]; then
-## Run all BDDs 
-  cd experiments
-  ginkgo -nodes=${PARALLEL_EXECUTION}
-  cd ..
-
-elif [ ! -z "$EXPERIMENT_NAME" ]; then
-## Run the selected chaos experiment
-  go test experiments/${EXPERIMENT_NAME}_test.go -v -count=1 -timeout=${TEST_TIMEOUT}s
+# Handle Litmus installation if requested
+if [ "$INSTALL_LITMUS" = "true" ]; then
+  echo "Installing Litmus..."
+  /app/install-litmus
 fi
 
-##litmus cleanup
-if [ "$LITMUS_CLEANUP" == "true" ]
-then
-  go test litmus/uninstall-litmus_test.go -v -count=1
+# Handle Litmus cleanup if requested and no experiment is specified
+if [ "$LITMUS_CLEANUP" = "true" ] && [ -z "$EXPERIMENT_NAME" ]; then
+  echo "Cleaning up Litmus..."
+  /app/uninstall-litmus
+  exit 0
+fi
+
+# Map experiment names to their corresponding scripts in chaos-ci-lib
+case "$EXPERIMENT_NAME" in
+  "pod-delete")
+    /app/pod-delete
+    ;;
+  "container-kill")
+    /app/container-kill
+    ;;
+  "pod-cpu-hog")
+    /app/pod-cpu-hog
+    ;;
+  "pod-memory-hog")
+    /app/pod-memory-hog
+    ;;
+  "node-cpu-hog")
+    /app/node-cpu-hog
+    ;;
+  "node-memory-hog")
+    /app/node-memory-hog
+    ;;
+  "node-io-stress")
+    /app/node-io-stress
+    ;;
+  "disk-fill")
+    /app/disk-fill
+    ;;
+  "pod-network-latency")
+    /app/pod-network-latency
+    ;;
+  "pod-network-loss")
+    /app/pod-network-loss
+    ;;
+  "pod-network-corruption")
+    /app/pod-network-corruption
+    ;;
+  "pod-network-duplication")
+    /app/pod-network-duplication
+    ;;
+  "pod-autoscaler")
+    /app/pod-autoscaler
+    ;;
+  "all")
+    /app/all-experiments
+    ;;
+  *)
+    echo "Unknown experiment: $EXPERIMENT_NAME"
+    echo "Available experiments: pod-delete, container-kill, pod-cpu-hog, pod-memory-hog, node-cpu-hog, node-memory-hog, node-io-stress, disk-fill, pod-network-latency, pod-network-loss, pod-network-corruption, pod-network-duplication, pod-autoscaler, all"
+    exit 1
+    ;;
+esac
+
+# Handle Litmus cleanup after experiment if requested
+if [ "$LITMUS_CLEANUP" = "true" ] && [ ! -z "$EXPERIMENT_NAME" ]; then
+  echo "Cleaning up Litmus after experiment..."
+  /app/uninstall-litmus
 fi

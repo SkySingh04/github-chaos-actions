@@ -44,7 +44,7 @@ jobs:
           # Experiment Configuration
           EXPERIMENT_NAME: container-kill
           EXPERIMENT_IMAGE: litmuschaos/go-runner
-          EXPERIMENT_IMAGE_TAG: 1.13.8
+          EXPERIMENT_IMAGE_TAG: 3.18.0
            
           
           # Container Kill Specific Configuration
@@ -55,14 +55,14 @@ jobs:
           SOCKET_PATH: /run/containerd/containerd.sock
           SIGNAL: SIGKILL
           SEQUENCE: parallel
-          PODS_AFFECTED_PERC: 100
+          PODS_AFFECTED_PERC: 0
           DEFAULT_HEALTH_CHECK: false
           
           # Optional Probe Setup
           LITMUS_CREATE_PROBE: "true"
           LITMUS_PROBE_NAME: "http-status-check"
           LITMUS_PROBE_TYPE: "httpProbe"
-          LITMUS_PROBE_MODE: "Continuous"
+          LITMUS_PROBE_MODE: "SOT"
           LITMUS_PROBE_URL: "http://nginx-svc:80/"
           LITMUS_PROBE_RESPONSE_CODE: "200"
           
@@ -311,7 +311,7 @@ The following environment variables are used to configure the container-kill exp
     <td> EXPERIMENT_IMAGE_TAG </td>
     <td> We can set the image tag while using custom image for the chaos experiment </td>
     <td> Optional </td>
-    <td> 1.13.8 </td>
+    <td> 3.18.0 </td>
   </tr>  
   <tr>
     <td> IMAGE_PULL_POLICY </td>
