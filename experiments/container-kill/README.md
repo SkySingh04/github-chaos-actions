@@ -34,7 +34,7 @@ jobs:
           INSTALL_INFRA: "true"
           INFRA_NAME: "container-kill-infra"
           INFRA_NAMESPACE: "litmus"
-          INFRA_SCOPE: "namespace"
+          INFRA_SCOPE: "cluster"
           
           # Application Info
           APP_NS: default
@@ -109,6 +109,71 @@ The following environment variables are used to configure the container-kill exp
   </tr>
 </table>
 
+### Common Environment Variables
+
+<table>
+  <tr>
+    <th> Variables </th>
+    <th> Description </th>
+    <th> Specify In Chaos Action </th>
+    <th> Default Value </th>
+  </tr>
+  <tr> 
+    <td> KUBECONFIG </td>
+    <td> Path to kubeconfig file </td>
+    <td> Optional </td>
+    <td> /home/runner/.kube/config </td>
+  </tr>
+  <tr> 
+    <td> APP_NS </td>
+    <td> Application namespace for chaos testing </td>
+    <td> Optional </td>
+    <td> litmus </td>
+  </tr>
+  <tr> 
+    <td> ACTIVATE_INFRA </td>
+    <td> Whether to activate infrastructure </td>
+    <td> Optional </td>
+    <td> true </td>
+  </tr>
+  <tr> 
+    <td> CREATE_ENV </td>
+    <td> Whether to create environment </td>
+    <td> Optional </td>
+    <td> true </td>
+  </tr>
+  <tr> 
+    <td> ENV_NAME </td>
+    <td> Name of the environment </td>
+    <td> Optional </td>
+    <td> ci-test-env </td>
+  </tr>
+  <tr> 
+    <td> ENV_TYPE </td>
+    <td> Type of environment </td>
+    <td> Optional </td>
+    <td> NON_PROD </td>
+  </tr>
+  <tr> 
+    <td> INFRA_ACTIVATION_TIMEOUT </td>
+    <td> Timeout for infrastructure activation </td>
+    <td> Optional </td>
+    <td> 5 </td>
+  </tr>
+  <tr> 
+    <td> LITMUS_USE_EXISTING_PROBE </td>
+    <td> Whether to use existing probe </td>
+    <td> Optional </td>
+    <td> false </td>
+  </tr>
+  <tr> 
+    <td> APP_LABEL </td>
+    <td> Application label for targeting </td>
+    <td> Optional </td>
+    <td> app=nginx-container-kill </td>
+  </tr>
+</table>
+
 ### Infrastructure Setup Variables
 
 <table>
@@ -152,7 +217,7 @@ The following environment variables are used to configure the container-kill exp
     <td> INFRA_SCOPE </td>
     <td> Scope of infrastructure </td>
     <td> Optional </td>
-    <td> namespace </td>
+    <td> cluster </td>
   </tr>
   <tr> 
     <td> INFRA_SERVICE_ACCOUNT </td>
